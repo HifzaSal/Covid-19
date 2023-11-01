@@ -1,3 +1,4 @@
+
 SELECT
   *
 FROM
@@ -5,10 +6,9 @@ FROM
 ORDER BY
   3,
   4;
-  --SELECT *
-  --FROM `hifza-portfolio-project-01.COVID_19.CovidVaccinations`
-  --ORDER BY 3,4
 
+
+-- selecting the data 
 
 
 SELECT
@@ -22,6 +22,9 @@ FROM
 ORDER BY
   1,
   2;
+
+
+-- filtering the data for Australia 
 
 SELECT
   location,
@@ -35,6 +38,11 @@ WHERE location like 'Australia'
 ORDER BY
   1,
   2;
+
+-- Total Cases vs Total Deaths
+-- Shows likelihood of dying if you contract covid in Australia 
+
+
 SELECT
   location,
   date,
@@ -48,6 +56,9 @@ ORDER BY
   1,
   2;
 
+-- Total Cases vs Population
+-- Shows what percentage of population infected with Covid
+
 SELECT
   location,
   population,
@@ -60,6 +71,7 @@ GROUP BY
   population
 ORDER BY
 PercentPoulationInfected desc;
+
 
 SELECT
   location,
@@ -263,6 +275,8 @@ dea.continent is not null
 ORDER BY
 2,
 3;
+
+-- Using CTE to perform Calculation on Partition By in previous query
 
 WITH PopvsVac 
 AS (
