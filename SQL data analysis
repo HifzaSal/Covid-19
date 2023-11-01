@@ -1,0 +1,312 @@
+SELECT
+  *
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+ORDER BY
+  3,
+  4;
+  --SELECT *
+  --FROM `hifza-portfolio-project-01.COVID_19.CovidVaccinations`
+  --ORDER BY 3,4
+
+
+
+SELECT
+  location,
+  date,
+  total_cases,
+  total_deaths,
+  (total_deaths/total_cases)*100 AS DeathPercentage
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+ORDER BY
+  1,
+  2;
+
+SELECT
+  location,
+  date,
+  population,
+  total_cases,
+  (total_cases/population)*100 AS Population_had_covid
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+WHERE location like 'Australia'
+ORDER BY
+  1,
+  2;
+SELECT
+  location,
+  date,
+  total_cases,
+  total_deaths,
+  (total_deaths/total_cases)*100 AS DeathPercentage
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+WHERE location like 'Australia'
+ORDER BY
+  1,
+  2;
+
+SELECT
+  location,
+  population,
+  MAX(total_cases) AS highestInfectionCount,
+  MAX((total_cases/population))*100 AS PercentPoulationInfected
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+GROUP BY 
+  location,
+  population
+ORDER BY
+PercentPoulationInfected desc;
+
+SELECT
+  location,
+  Max(total_deaths) AS TotalDeathCount
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+GROUP BY 
+  location
+ORDER BY
+TotalDeathCount desc;
+
+
+SELECT
+  *
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+WHERE continent is not null
+ORDER BY
+  3,
+  4;
+  --SELECT *
+  --FROM `hifza-portfolio-project-01.COVID_19.CovidVaccinations`
+  --ORDER BY 3,4
+
+SELECT
+  location,
+  date,
+  total_cases,
+  new_cases,
+  total_deaths,
+  population
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+ORDER BY
+  1,
+  2;
+
+-- total cases vs deaths 
+-- % chances of dying from covid 
+SELECT
+  location,
+  date,
+  total_cases,
+  total_deaths,
+  (total_deaths/total_cases)*100 AS DeathPercentage
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+WHERE location like 'Australia'
+ORDER BY
+  1,
+  2;
+
+  --total cases vs population
+  --what percentage got covid
+SELECT
+  location,
+  date,
+  population,
+  total_cases,
+  (total_cases/population)*100 AS PercentPoulationInfected
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+WHERE location like 'Australia'
+ORDER BY
+  1,
+  2;
+
+-- Countries with hightest infection rate compared to poulation
+SELECT
+  location,
+  population,
+  MAX(total_cases) AS highestInfectionCount,
+  MAX((total_cases/population))*100 AS PercentPoulationInfected
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+GROUP BY 
+  location,
+  population
+ORDER BY
+PercentPoulationInfected desc;
+
+-- Countries with highest Death Count Per Poupulation
+SELECT
+  continent,
+  Max(total_deaths) AS TotalDeathCount
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+WHERE continent is not null
+GROUP BY 
+  continent
+ORDER BY
+TotalDeathCount desc;
+
+SELECT
+  location,
+  Max(total_deaths) AS TotalDeathCount
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+WHERE continent is null
+GROUP BY 
+  location
+ORDER BY
+TotalDeathCount desc;
+
+-- filtering out income, European union and world 
+
+SELECT
+  location,
+  SUM(new_deaths) AS TotalDeathCount
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+WHERE continent is null 
+AND NOT (location LIKE '%income%' OR location = 'European Union'OR location = 'World')
+GROUP BY 
+  location
+ORDER BY
+TotalDeathCount desc;
+
+
+SELECT
+  continent,
+  Max(total_deaths) AS TotalDeathCount
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+WHERE continent is not null 
+GROUP BY 
+  continent
+ORDER BY
+TotalDeathCount desc;
+
+SELECT
+  date,
+  SUM(new_cases) AS NewCases,
+  SUM(new_deaths) As NewDeaths
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+WHERE continent is not null 
+GROUP BY 
+  date
+ORDER BY
+  1 desc;
+
+
+SELECT
+  date,
+  SUM(new_cases) AS NewCases,
+  SUM(new_deaths) As NewDeaths,
+  SAFE_DIVIDE(SUM(new_deaths),SUM(new_cases))*100 As DeathPercentage
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+WHERE continent is not null 
+GROUP BY 
+  date
+ORDER BY
+  1 desc,
+  2
+  ;
+
+
+
+SELECT
+ -- date,
+  SUM(new_cases) AS NewCases,
+  SUM(new_deaths) As NewDeaths,
+  SAFE_DIVIDE(SUM(new_deaths),SUM(new_cases))*100 As DeathPercentage
+FROM
+  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+WHERE continent is not null 
+--GROUP BY 
+  --date
+ORDER BY
+  1 desc,
+  2
+  ;
+
+
+SELECT*
+FROM 
+ `hifza-portfolio-project-01.COVID_19.CovidDeaths` dea
+JOIN
+ `hifza-portfolio-project-01.COVID_19.CovidVaccinations` Vac
+  ON dea.location = Vac.location
+  AND dea.date = Vac.date ;
+
+
+SELECT
+  dea.continent,
+  dea.location,
+  dea.date,
+  dea.population,
+  Vac.new_vaccinations,
+  SUM(Vac.new_vaccinations) OVER (partition by dea.location ORDER BY dea.location, dea.date)
+FROM 
+ `hifza-portfolio-project-01.COVID_19.CovidDeaths` dea
+JOIN
+ `hifza-portfolio-project-01.COVID_19.CovidVaccinations` Vac
+  ON dea.location = Vac.location
+  AND dea.date = Vac.date 
+WHERE
+dea.continent is not null
+ORDER BY
+2,
+3;
+
+WITH PopvsVac 
+AS (
+SELECT
+  dea.continent,
+  dea.location,
+  dea.date,
+  dea.population,
+  Vac.new_vaccinations,
+  SUM(Vac.new_vaccinations) OVER (partition by dea.location ORDER BY dea.location, dea.date) as RollingPeopleVaccinated
+FROM 
+ `hifza-portfolio-project-01.COVID_19.CovidDeaths` dea
+JOIN
+ `hifza-portfolio-project-01.COVID_19.CovidVaccinations` Vac
+  ON dea.location = Vac.location
+  AND dea.date = Vac.date 
+WHERE
+dea.continent is not null
+)
+
+select *, (RollingPeopleVaccinated/population)*100
+FROM PopvsVac;
+
+
+select  
+location,
+population,
+Max(total_cases) as HighestInfectionCount,
+Max(total_cases/population)*100 as PercentPopulationInfected
+from  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+group by
+location, population
+order by
+PercentPopulationInfected desc; 
+
+
+select  
+location,
+population,
+date,
+Max(total_cases) as HighestInfectionCount,
+Max(total_cases/population)*100 as PercentPopulationInfected
+from  `hifza-portfolio-project-01.COVID_19.CovidDeaths`
+group by
+location, population, date
+order by
+PercentPopulationInfected desc; 
